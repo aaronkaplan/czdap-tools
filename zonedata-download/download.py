@@ -6,6 +6,9 @@ import json
 import sys
 from urlparse import urlparse
 import os
+import pprint
+
+debug = False
 
 # Create a session
 s = requests.Session()
@@ -33,13 +36,15 @@ if config.has_key('auth_user') and config.has_key('auth_pass'):
 if config.has_key('ssl_skip_verify'):
   s.verify = False
 
+
 # Get all the files that need to be downloaded using CZDAP API.
 r = s.get(config['base_url'] + '/user-zone-data-urls.json?token=' + config['token'])
 if r.status_code != 200:
   sys.stderr.write("Unexpected response from CZDAP. Are you sure your token and base_url are correct in config.json?\n")
   exit(1)
 try:
-  urls = json.loads(r.text)
+  if (debug): pprint.pprint(r.content)
+  urls = json.loads(r.content)
 except:
   sys.stderr.write("Unable to parse JSON returned from CZDAP.\n")
   exit(1)
